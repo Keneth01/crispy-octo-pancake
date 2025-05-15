@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AHT Calculator</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #eee;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    .container {
+      background-color: #181818;
+      padding: 25px 30px;
+      border-radius: 6px;
+      max-width: 700px;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+      position: relative;
+    }
+    h2 {
+      margin-bottom: 10px;
+    }
+    #userNameDisplay {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      user-select: none;
+    }
+    #loginError {
+      font-weight: 600;
+      min-height: 20px;
+      margin-bottom: 10px;
+      color: #f55353;
+    }
+    input[type=text], input[type=number] {
+      width: 100%;
+      max-width: 350px;
+      padding: 8px;
+      border-radius: 4px;
+      font-size: 16px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      box-sizing: border-box;
+      background-color: #222;
+      border: 1px solid #444;
+      color: #eee;
+    }
+    button {
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 15px;
+      font-size: 16px;
+      user-select: none;
+      background-color: #1877f2;
+      color: white;
+      width: 100%;
+      max-width: 350px;
+    }
+    button:hover {
+      background-color: #145dbf;
+    }
+    #daysContainer {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+      user-select: none;
+    }
+    label.checkbox-label {
+      cursor: pointer;
+      font-size: 14px;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      color: #eee;
+    }
+    input[type=checkbox] {
+      transform: scale(1.2);
+      margin-right: 6px;
+      cursor: pointer;
+      accent-color: #1877f2;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      padding: 8px;
+      text-align: center;
+      border: 1px solid #555;
+      background-color: #222;
+      color: #a0c1f7;
+    }
+    #resultBox {
+      margin-top: 20px;
+      white-space: pre-line;
+      padding: 15px;
+      border-radius: 6px;
+      font-weight: 700;
+      text-align: center;
+      user-select: none;
+      color: black;
+      background-color: #e1e9ff;
+      border: 2px solid #1877f2;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #congratsMsg {
+      margin-top: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
+      user-select: none;
+      color: #2e7d32;
+      min-height: 24px;
+    }
+    #logoutBtn {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      user-select: none;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      width: auto;
+      min-width: auto;
+      text-align: center;
+    }
+    #logoutBtn:hover {
+      background-color: #d32f2f;
+    }
+    #resetBtn {
+      display: none;
+      margin: 20px auto 0 auto;
+      padding: 10px 24px;
+      border-radius: 6px;
+      background-color: #999;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      user-select: none;
+      max-width: 150px;
+      width: 100%;
+    }
+    #resetBtn:hover {
+      background-color: #666;
+    }
+    #adminLoginBtn {
+      background: transparent;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      font-size: 12px;
+      user-select: none;
+      padding: 0;
+      margin-top: 10px;
+      text-decoration: underline;
+      opacity: 0.7;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      max-width: 350px;
+    }
+    #adminLoginBtn:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" id="loginContainer" style="position:relative;">
+  <h2>Login</h2>
+  <input type="text" id="loginInput" placeholder="Enter your full Ping ID" autocomplete="off" maxlength="9" />
+  <div id="loginError"></div>
+  <button id="loginBtn">Login</button>
+  <button id="adminLoginBtn" title="Admin Login">© Lysimusafro</button>
+</div>
+
+<div class="container" id="mainCalc" style="display:none; position: relative;">
+  <button id="logoutBtn" title="Logout">Logout</button>
+  <div id="userNameDisplay"></div>
+  <h2>AHT Calculator</h2>
+
+  <div id="daysContainer">
+    <label class="checkbox-label"><input type="checkbox" name="day" value="Monday"> Monday</label>
+    <label class="checkbox-label"><input type="checkbox" name="day" value="Tuesday"> Tuesday</label>
+    <label class="checkbox-label"><input type="checkbox" name="day" value="Wednesday"> Wednesday</label>
+    <label class="checkbox-label"><input type="checkbox" name="day" value="Thursday"> Thursday</label>
+    <label class="checkbox-label"><input type="checkbox" name="day" value="Friday"> Friday</label>
+    <label class="checkbox-label"><input type="checkbox" name="day" value="Saturday"> Saturday</label>
+    <label class="checkbox-label"><input type="checkbox" name="day" value="Sunday"> Sunday</label>
+  </div>
+
+  <button id="generateFieldsBtn">Generate Fields</button>
+
+  <div id="fields"></div>
+
+  <div id="resultBox"></div>
+  <div id="congratsMsg"></div>
+
+  <button id="calcBtn" style="margin-top:15px; float:right;">Calculate</button>
+  <button id="resetBtn">Reset</button>
+</div>
+
+<script>
+  const initialsToName = {
+    "AJ": "Ashley Joie Mariano",
+    "DA": "Deejei Aguila",
+    "FC": "Fernan Cerezo",
+    "GC": "Gelli Dela Cruz",
+    "GF": "Genesis Fugen",
+    "GB": "Geraldine Bernadette Corpuz",
+    "GV": "Glaiza Vidal",
+    "JS": "Jac Santos",
+    "JP": "Jan Matthew Pasandalan",
+    "JA": "Jonathan Agdeppa",
+    "RD": "Robert Datuin",
+    "RB": "Ruth Barron",
+    "SO": "Samuel Jr. Oderon",
+    "VM": "Van Manuel",
+    "ZP": "Zharmaine Puriño",
+    "KD": "Keneth Dancel"
+  };
+
+  const loginContainer = document.getElementById('loginContainer');
+  const mainCalc = document.getElementById('mainCalc');
+  const loginBtn = document.getElementById('loginBtn');
+  const loginInput = document.getElementById('loginInput');
+  const loginError = document.getElementById('loginError');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const fieldsDiv = document.getElementById('fields');
+  const resultBox = document.getElementById('resultBox');
+  const congratsMsg = document.getElementById('congratsMsg');
+  const userNameDisplay = document.getElementById('userNameDisplay');
+  const calcBtn = document.getElementById('calcBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const adminLoginBtn = document.getElementById('adminLoginBtn');
+
+  loginBtn.onclick = () => {
+    const val = loginInput.value.trim().toUpperCase();
+
+    if(val.length !== 9) {
+      loginError.textContent = 'Ping ID must be 2 letters followed by 7 digits (total 9 characters).';
+      return;
+    }
+    const letters = val.substring(0,2);
+    const digits = val.substring(2);
+
+    if(!initialsToName[letters]) {
+      loginError.textContent = 'Invalid Ping ID prefix letters.';
+      return;
+    }
+    if(!/^\d{7}$/.test(digits)) {
+      loginError.textContent = 'Last 7 characters must be digits.';
+      return;
+    }
+
+    loginError.textContent = '';
+    loginContainer.style.display = 'none';
+    mainCalc.style.display = 'block';
+    loginInput.value = '';
+
+    userNameDisplay.textContent = `Welcome, ${initialsToName[letters]}!`;
+    congratsMsg.textContent = '';
+    resultBox.style.color = 'black';
+  };
+
+  logoutBtn.onclick = () => {
+    mainCalc.style.display = 'none';
+    loginContainer.style.display = 'flex';
+    loginInput.value = '';
+    loginError.textContent = '';
+    fieldsDiv.innerHTML = '';
+    resultBox.textContent = '';
+    congratsMsg.textContent = '';
+    userNameDisplay.textContent = '';
+    document.querySelectorAll('input[name=day]').forEach(cb => cb.checked = false);
+    resetBtn.style.display = 'none';
+    resultBox.style.color = 'black';
+  };
+
+  generateFieldsBtn.onclick = () => {
+    const checkedDays = [...document.querySelectorAll('input[name=day]:checked')];
+    if(checkedDays.length === 0) {
+      alert('Select at least one day');
+      return;
+    }
+    if(checkedDays.length > 5) {
+      alert('Select up to 5 days only');
+      return;
+    }
+    let html = '<table><tr><th>Day</th><th>Hours</th><th>Minutes</th><th>Jobs</th></tr>';
+    checkedDays.forEach((day, i) => {
+      html += `<tr>
+        <td>${day.value}</td>
+        <td><input type="number" id="hours${i}" min="0" max="7"></td>
+        <td><input type="number" id="minutes${i}" min="0" max="59"></td>
+        <td><input type="number" id="jobs${i}" min="0"></td>
+      </tr>`;
+    });
+    html += '</table>';
+    fieldsDiv.innerHTML = html;
+    resultBox.textContent = '';
+    congratsMsg.textContent = '';
+    resetBtn.style.display = 'none';
+    resultBox.style.color = 'black';
+  };
+
+  calcBtn.onclick = () => {
+    const checkedDays = [...document.querySelectorAll('input[name=day]:checked')];
+    if(checkedDays.length === 0) {
+      alert('Select at least one day');
+      return;
+    }
+
+    let totalSeconds = 0;
+    let totalJobs = 0;
+    let exceededLimit = false;
+
+    for(let i=0; i<checkedDays.length; i++) {
+      const h = parseInt(document.getElementById(`hours${i}`).value);
+      const m = parseInt(document.getElementById(`minutes${i}`).value);
+      const j = parseInt(document.getElementById(`jobs${i}`).value);
+
+      if(isNaN(h) || isNaN(m) || isNaN(j)) {
+        alert('Fill all fields with valid numbers');
+        return;
+      }
+      if(m > 59 || m < 0) {
+        alert('Minutes must be between 0 and 59');
+        return;
+      }
+      if(h > 7 || (h === 7 && m > 30)) {
+        exceededLimit = true;
+      }
+
+      totalSeconds += h*3600 + m*60;
+      totalJobs += j;
+    }
+    if(totalJobs === 0) {
+      alert('Total jobs cannot be zero');
+      return;
+    }
+
+    const aht = totalSeconds / totalJobs;
+    const hoursWorked = Math.floor(totalSeconds / 3600);
+    const minutesWorked = Math.floor((totalSeconds % 3600) / 60);
+
+    resultBox.textContent =
+      `AHT: ${aht.toFixed(2)} seconds\n` +
+      `Total Hours Worked: ${hoursWorked}h ${minutesWorked}m\n` +
+      `Total Job Count: ${totalJobs}`;
+
+    if (aht <= 5.95) {
+      congratsMsg.textContent = "🎉 Congratulations! You've met the target AHT!";
+      resultBox.style.color = "green";
+    } else {
+      congratsMsg.textContent = "";
+      resultBox.style.color = "red";
+    }
+
+    if(exceededLimit) {
+      alert("⚠️ Warning: One or more days have time input exceeding 7 hours 30 minutes!");
+    }
+
+    resetBtn.style.display = 'block';
+  };
+
+  resetBtn.onclick = () => {
+    fieldsDiv.innerHTML = '';
+    resultBox.textContent = '';
+    congratsMsg.textContent = '';
+    resetBtn.style.display = 'none';
+    resultBox.style.color = 'black';
+  };
+
+  adminLoginBtn.onclick = () => {
+    loginContainer.style.display = 'none';
+    mainCalc.style.display = 'block';
+    userNameDisplay.textContent = 'Welcome, Admin!';
+    congratsMsg.textContent = '';
+    resultBox.style.color = 'black';
+  };
+
+  window.onload = () => {
+    resetBtn.style.display = 'none';
+    loginContainer.style.display = 'flex';
+    loginContainer.style.flexDirection = 'column';
+    loginContainer.style.alignItems = 'center';
+    loginContainer.style.justifyContent = 'center';
+    loginContainer.style.gap = '10px';
+  };
+</script>
+
+</body>
+</html>
